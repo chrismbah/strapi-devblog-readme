@@ -8,7 +8,7 @@ In today’s digital landscape, creating a robust and interactive blogging platf
 **[Next.js](https://nextjs.org/docs)** is a robust React framework that enhances web applications with features like server-side rendering, static site generation, and automatic code splitting. These capabilities ensure optimal performance and a seamless user experience.
 
 
-**[Tailwind CSS](https://tailwindcss.com/)** is a utility-first CSS framework that allows for rapid and responsive design implementation, enabling developers to create aesthetically pleasing interfaces without the complexity of custom styles.
+<!-- **[Tailwind CSS](https://tailwindcss.com/)** is a utility-first CSS framework that allows for rapid and responsive design implementation, enabling developers to create aesthetically pleasing interfaces without the complexity of custom styles. -->
 
 
 This documentation will guide you through the steps required to set up your blog, covering backend configuration with Strapi, frontend development with Next.js, SEO optimization, pagination, and search functionality. By the end of this tutorial, you will have a comprehensive understanding of building a fully functional, developer-friendly blog. Let’s get started!
@@ -48,7 +48,7 @@ Create your Strapi app in a folder named backend.
 
 
 ```bash
-npx create-strapi-app@4.10.4 backend --quickstart
+npx create-strapi-app@5.0.4 backend --quickstart
 ```
 
 
@@ -58,3 +58,27 @@ The ```--quickstart``` flag sets up your Strapi app with an SQLite database and 
 If the server is not already running in your terminal, ```cd``` into the backend folder and run ```npm develop``` to launch it. 
 
 Visit  in your browser and register your details in the Strapi Admin Registration Form.```http://localhost:1337/admin```
+
+# Design the content model for a developer friendly blog
+
+Now that your Strapi application is setup and running, fill the form with your personal information to get authenticated to the **Strapi Admin Panel**.
+
+![Strapi signup page](/images/strapi-signup.png "Strapi SignUp")
+
+From your admin panel, click on the **Content-Type Builder** -> **Create new collection type** tab to create a **Blog** collection for your application.
+
+![Create new collection](/images/new-collection-type.png "Create new collection")
+
+A modal will appear, containing forms for your collection name. Enter "Blog" as the display name which would be the name of the collection. Strapi automatically fills in the singular and plural api ids, then click on **Continue** to proceed.
+
+![Create blog collection](/images/blog-collection-type.png "Create blog collection")
+
+Next, select the **fields** for your collection. For this blog application, choose the following:
+
+- **Title:** Text (Long Text)
+- **Description:** Text (Short Text)
+- **Content:** Rich Text (Markdown)
+- **Cover:** Media (Image upload)
+- **Slug:** UID (Unique identifier based on the title)
+- **Category:** Relation (Connect to a Category collection)
+
