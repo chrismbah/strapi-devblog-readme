@@ -8,9 +8,6 @@ In today’s digital landscape, creating a robust and interactive blogging platf
 **[Next.js](https://nextjs.org/docs)** is a robust React framework that enhances web applications with features like server-side rendering, static site generation, and automatic code splitting. These capabilities ensure optimal performance and a seamless user experience.
 
 
-<!-- **[Tailwind CSS](https://tailwindcss.com/)** is a utility-first CSS framework that allows for rapid and responsive design implementation, enabling developers to create aesthetically pleasing interfaces without the complexity of custom styles. -->
-
-
 This documentation will guide you through the steps required to set up your blog, covering backend configuration with Strapi, frontend development with Next.js, SEO optimization, pagination, and search functionality. By the end of this tutorial, you will have a comprehensive understanding of building a fully functional, developer-friendly blog. Let’s get started!
 
 # Before Getting Started
@@ -20,15 +17,15 @@ Here's the final result of the blog website you will build if you want to see it
 
 # Prerequisites
 
-- This tutorial uses the latest version of Strapi at the time of writing this article ```v5.0.x```
+- This tutorial uses the latest version of Strapi at the time of writing this article `v5.0.x`
 
-- Node ```v18.x.x``` or ```v20.x.x.```  You can download Node.js [here](https://nodejs.org/en/download/package-manager).
+- Node `v18.x.x` or `v20.x.x.`  You can download Node.js [here](https://nodejs.org/en/download/package-manager).
 
 
 
 # Setting up project folder
 
-Open up your terminal and create a ```strapi-dev-blog``` folder to store your project files.
+Open up your terminal and create a `strapi-dev-blog` folder to store your project files.
 
 
 ```bash
@@ -52,12 +49,12 @@ npx create-strapi-app@5.0.4 backend --quickstart
 ```
 
 
-The ```--quickstart``` flag sets up your Strapi app with an SQLite database and automatically starts your server on port ```1337```.
+The `--quickstart` flag sets up your Strapi app with an SQLite database and automatically starts your server on port `1337`.
 
 
-If the server is not already running in your terminal, ```cd``` into the backend folder and run ```npm develop``` to launch it. 
+If the server is not already running in your terminal, `cd` into the `backend` folder and run `npm develop` to launch it. 
 
-Visit  in your browser and register your details in the Strapi Admin Registration Form.```http://localhost:1337/admin```
+Visit  in your browser and register your details in the Strapi Admin Registration Form.`http://localhost:1337/admin`
 
 # Design the content model for a developer friendly blog
 
@@ -65,20 +62,70 @@ Now that your Strapi application is setup and running, fill the form with your p
 
 ![Strapi signup page](/images/strapi-signup.png "Strapi SignUp")
 
-From your admin panel, click on the **Content-Type Builder** -> **Create new collection type** tab to create a **Blog** collection for your application.
+<!-- ![Create new collection](/images/new-collection-type.png "Create new collection")
 
-![Create new collection](/images/new-collection-type.png "Create new collection")
 
-A modal will appear, containing forms for your collection name. Enter "Blog" as the display name which would be the name of the collection. Strapi automatically fills in the singular and plural api ids, then click on **Continue** to proceed.
+![Create blog collection](/images/blog-collection-type.png "Create blog collection") -->
 
-![Create blog collection](/images/blog-collection-type.png "Create blog collection")
+From your admin panel, click on **Content-Type Builder** -> **Create new collection type** tab to create a collection and their field types for your application. In this case we are creating three collections; **Author**, **Blog**, and **Category**.
 
-Next, select the **fields** for your collection. For this blog application, choose the following:
+## Collections Overview
 
-- **Title:** Text (Long Text)
-- **Description:** Text (Short Text)
-- **Content:** Rich Text (Markdown)
-- **Cover:** Media (Image upload)
-- **Slug:** UID (Unique identifier based on the title)
-- **Category:** Relation (Connect to a Category collection)
+### Blog 
+The Blog collection will contain the blog posts. It will have the following fields:
 
+**title:** Text (Long Text)
+**description:** Text (Short Text)
+**content:** Rich Text (Markdown)
+**cover:** Media (Image upload)
+**slug:** UID (Unique identifier based on the title)
+**category:** Relation - many to many (Connect to a Category collection)
+
+### Author 
+The Author collection will contain the authors of the blog posts. It will have the following fields:
+
+**name:** Text
+**avatar:** Media (Image upload)
+**email:** Short Text
+**blogs:** Relation with the Blogs collection - one to many
+
+### Category 
+The Category collection will contain the categories of the blog posts. It will have the following fields:
+**name:** Text (Short Text)
+**slug:** UID
+**description:** Text (Short Text)
+**blog:** Relation - many to many
+
+## Understanding Relationships
+
+In Strapi, relationships define how different content types interact with each other.
+**One-to-Many Relationship:** This relationship exists when one record in one collection can be associated with multiple records in another collection. For example, one author can have multiple blog posts.
+**Many-to-Many Relationship:** This relationship allows multiple records in one collection to be associated with multiple records in another collection. For instance, a blog post can belong to multiple categories and vice versa.
+
+For more detailed information on relationships in Strapi, check out this guide.
+
+## Inputting Dummy Data
+Now that you’ve set up your collections, it’s time for some fun! You can input some dummy data for testing purposes. This will help you verify that everything is working smoothly before moving on.
+
+## Allowing Public API Access
+
+Now let's allow API access to your blog to allow you access the blog posts via your API on the frontend. To do that, click on **Settings** -> **Roles** -> **Public**
+
+![Public API ](/images/public-api.png "Public API")
+
+Afterward, collapse the **Blog Permission** tab and mark the **Select all** option and click on the **Save** button.
+
+![Public API ](/images/blog-public-api.png "Blog API")
+
+Scroll downwards and do the same for the **Upload Permission** tab to enable us **upload** images to our strapi backend.
+
+![Public API ](/images/upload-public-api.png "Upload API")
+
+# Create a Standard Next.js App
+
+In a new terminal session, change the directory to `blog-strapi `and run the following command:
+
+```bash 
+npx create-next-app@latest
+```
+Follow the prompts to create a new Next.js app. Once the app is created, navigate into the
