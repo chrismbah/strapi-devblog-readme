@@ -318,7 +318,7 @@ Let's talk about each of the following functions
 
 ## Create the `Navbar` component and implement search handling
 
-Create a `components` folder and create a `Navbar.tsx` file within the folder. The `Navbar` component would handle search functionality as well as links to other routes.
+Create a `components` folder within the `src` folder and create a `Navbar.tsx` file within the folder. The `Navbar` component would handle search functionality as well as links to other routes.
 
 ```tsx
 "use client";
