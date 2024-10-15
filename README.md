@@ -127,6 +127,9 @@ On installation, you'll see some prompts. Name your project `frontend` and refer
 
 ![Next JS installation](/images/next-install.png "Install Next Js")
 
+**Note:** Make sure you select the recommended `App Router` for Next JS because thats what we'd be using through out our application
+
+## Install necessary dependencies
 Add the following dependencies to your frontend Next app: react-hot-toast, react-icons, react-markdown, react-loader-spinner, remark-gfm, rehype-raw,react-syntax-highlighter for use later.
 
 ```bash
@@ -424,6 +427,8 @@ Create a `Loader` and `Pagination` component within the `components` folder to f
 
 ##  Create the `Loader` component
 
+The `Loader` component would be used to indicate the loading state when fetching data from strapi
+
 ```tsx
 // components/Loader.tsx
 import { LineWave } from "react-loader-spinner";
@@ -445,6 +450,9 @@ export default Loader;
 
 ```
 ## Create the `Pagination` component
+
+The `Pagination` component would be used to implement pagination for the blogs
+
 ```tsx
 import React from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa"; // Import arrow icons from react-icons
@@ -492,6 +500,59 @@ const Pagination: React.FC<PaginationProps> = ({
 };
 
 export default Pagination;
+
+```
+
+# Setup App Layout
+
+In the `app/layout.tsx` import the `Navbar` component from your `components` folder  and `Toaster` component from the `react-hot-toast` package and add them to the layout.
+
+Make changes to the `metadata` object, changing the **title**, **description** and **icon** to fit your application.
+
+```tsx
+import type { Metadata } from "next";
+import Navbar from "@/components/Navbar";
+import localFont from "next/font/local";
+import { Toaster } from "react-hot-toast";
+import "./globals.css";
+
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+  weight: "100 900",
+});
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  weight: "100 900",
+});
+
+export const metadata: Metadata = {
+  title: "DEV.BLOG",
+  description:
+    "Your go-to resource for all things Strapi—explore best practices, tips, and community insights to elevate your projects",
+  icons: {
+    icon: "/strapi.svg",
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" data-color-mode="dark">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <Navbar />
+        {children}
+        <Toaster />
+      </body>
+    </html>
+  );
+}
 
 ```
 
