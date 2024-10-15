@@ -12,7 +12,7 @@ This documentation will guide you through the steps required to set up your blog
 
 # Before Getting Started
 
-Here's the final result of the blog website you will build if you want to see it. Check out the [project repo here.](https://github.com/chrismbah/strapi-dev-blog)
+Here's the final result of the blog website you will build if you want to see it. Check out the [project repo here.](https://github.com/chrismbah/blog-strapi)
 
 
 # Prerequisites
@@ -25,18 +25,18 @@ Here's the final result of the blog website you will build if you want to see it
 
 # Setting up project folder
 
-Open up your terminal and create a `strapi-dev-blog` folder to store your project files.
+Open up your terminal and create a `blog-strapi` folder to store your project files.
 
 
 ```bash
-mkdir strapi-dev-blog
+mkdir blog-strapi
 ```
 
 
-Navigate into strapi-dev-blog
+Navigate into blog-strapi
 
 ```bash
-cd strapi-dev-blog
+cd blog-strapi
 ```
 
 # Create a Standard Strapi App
@@ -49,7 +49,7 @@ npx create-strapi-app@5.0.4 backend --quickstart
 ```
 
 
-The `--quickstart` flag sets up your Strapi app with an SQLite database and automatically starts your server on port `1337`.
+The `--quickstart` flag sets up your Strapi app with an **SQLite** database and automatically starts your server on port `1337`.
 
 
 If the server is not already running in your terminal, `cd` into the `backend` folder and run `npm develop` to launch it. 
@@ -94,7 +94,7 @@ The Category collection will contain the categories of the blog posts. It will h
 **name:** Text (Short Text)
 **slug:** UID
 **description:** Text (Short Text)
-**blog:** Relation - many to many
+**blogs:** Relation - many to many
 
 ## Understanding Relationships
 
@@ -128,4 +128,191 @@ In a new terminal session, change the directory to `blog-strapi `and run the fol
 ```bash 
 npx create-next-app@latest
 ```
-Follow the prompts to create a new Next.js app. Once the app is created, navigate into the
+On installation, you'll see some prompts. Name your project `frontend` and refer to the image below for the other responses.
+
+![Next JS installation](/images/next-install.png "Install Next Js")
+
+Add the following dependencies to your frontend Next app:  react-hot-toast, react-icons, react-markdown, react-loader-spinner, remark-gfm, rehype-raw,react-syntax-highlighter for use later.
+
+```bash
+cd frontend
+npm install react-hot-toast moment react-icons react-markdown react-loader-spinner remark-gfm rehype-raw react-syntax-highlighter
+```
+These libraries will help you implement features like notifications, date handling, icons, Markdown rendering, loading indicators, and more
+
+
+# Setup environmental variables
+
+Create a `.env` file in the root of your `frontend` directory and paste the following **environment variables**:
+
+```bash
+NEXT_PUBLIC_STRAPI_URL=http://localhost:1337/
+NEXT_PUBLIC_PAGE_LIMIT=6
+```
+The `NEXT_PUBLIC_STRAPI_URL` variable is used to connect to your Strapi backend.
+The `NEXT_PUBLIC_PAGE_LIMIT` variable is used to limit the number of blog posts displayed on each
+page.
+
+# Setup Types and  API Routes
+
+Create a new file called `lib/types.ts` in the `frontend` directory and paste the following
+
+```typescript
+// export Interface for Image Data
+export interface ImageData {
+  url: string;
+}
+
+// export Interface for Author Data
+export interface Author {
+  id: number; // Assuming each author has a unique ID
+  name: string;
+  email: string;
+  avatar: ImageData; // Assuming you have an avatar image
+}
+
+// export Interface for Category Data
+export interface Category {
+  documentId: string; // Assuming each category has a unique ID
+  name: string;
+  description: string; // Optional description
+}
+
+
+export interface BlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  description: string;
+  content: string; // rich markdown text
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+  cover: ImageData; // Assuming this is the structure of your featured image
+  author: Author; // The author of the blog post
+  categories: Category[]; // An array of categories associated with the post
+  documentId: string;
+}
+
+export interface UserBlogPostData {
+  title: string;
+  slug: string;
+  description: string;
+  content: string; //  rich markdown text
+}
+
+// Example response structure when fetching posts
+export interface BlogPostResponse {
+  data: BlogPost[];
+}
+
+// Example response structure when fetching a single post
+export interface SingleBlogPostResponse {
+  data: BlogPost; // The single blog post object
+}
+
+```
+
+This shows the structure of the various data types we would recieve for our blog application
+
+Create another file within the `lib` folder called `api.ts` paste the following functions
+
+```typescript
+import axios, { AxiosInstance } from "axios";
+import { UserBlogPostData } from "./types";
+
+export const api: AxiosInstance = axios.create({
+  baseURL: `${process.env.NEXT_PUBLIC_STRAPI_URL}`,
+});
+
+export const getAllPosts = async (
+  page: number = 1,
+  searchQuery: string = ""
+) => {
+  try {
+    // If search query exists, filter posts based on title
+    const searchFilter = searchQuery
+      ? `&filters[title][$containsi]=${searchQuery}`
+      : "";
+    // Fetch posts with pagination and populate the required fields (cover image, author, categories)
+    const response = await api.get(
+      `api/blogs?populate=*&pagination[page]=${page}&pagination[pageSize]=${process.env.NEXT_PUBLIC_PAGE_LIMIT}${searchFilter}`
+    );
+    return {
+      posts: response.data.data,
+      pagination: response.data.meta.pagination, // Include pagination data
+    };
+  } catch (error) {
+    console.error("Error fetching blogs:", error);
+    throw new Error("Server error");
+  }
+};
+
+// Get post by slug
+export const getPostBySlug = async (slug: string) => {
+  try {
+    const response = await api.get(
+      `api/blogs?filters[slug]=${slug}&populate=*`
+    ); // Fetching the post by the slug parameter
+    if (response.data.data.length > 0) { // If post exists
+      return response.data.data[0]; // Return the post data
+    }
+    throw new Error("Post not found.");
+  } catch (error) {
+    console.error("Error fetching post:", error);
+    throw new Error("Server error");
+  }
+};
+
+// Get all posts categories
+export const getAllCategories = async () => {
+  try {
+    const response = await api.get("api/categories");
+    return response.data.data; // Return all categories
+  } catch (error) {
+    console.error("Error fetching post:", error);
+    throw new Error("Server error");
+  }
+};
+
+// Upload image with correct structure for referencing in the blog
+export const uploadImage = async (image: File, refId: number) => {
+  try {
+    const formData = new FormData();
+    formData.append("files", image);
+    formData.append("ref", "api::blog.blog"); // ref: Strapi content-type name
+    formData.append("refId", refId.toString()); // refId: Blog post ID
+    formData.append("field", "cover"); // field: Image field name in the blog
+
+    const response = await api.post("api/upload", formData);
+    const uploadedImage = response.data[0];
+    return uploadedImage; // Return full image metadata
+  } catch (err) {
+    console.error("Error uploading image:", err);
+    throw err;
+  }
+};
+
+// Create a blog post and handle all fields
+export const createPost = async (postData: UserBlogPostData) => {
+  try {
+    const reqData = { data: { ...postData } };
+    const response = await api.post("api/blogs", reqData);
+    return response.data.data;
+  } catch (error) {
+    console.error("Error creating post:", error);
+    throw new Error("Failed to create post");
+  }
+};
+
+// Get SEO data
+export const getSEO = async () => {
+  try {
+    const response = await api.get("api/seo");
+    return response.data.data;
+  } catch (err) {
+    console.error("Error fetching data:", err);
+    throw new Error("Failed to fetch data");
+  }
+};
+
+```
