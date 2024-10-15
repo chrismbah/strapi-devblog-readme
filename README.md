@@ -65,34 +65,36 @@ From your admin panel, click on **Content-Type Builder** -> **Create new collect
 
 The Blog collection will contain the blog posts. It will have the following fields:
 
-**title:** Text (Long Text)
-**description:** Text (Short Text)
-**content:** Rich Text (Markdown)
-**cover:** Media (Image upload)
-**slug:** UID (Unique identifier based on the title)
-**category:** Relation - many to many (Connect to a Category collection)
+- **title:** Text (Long Text)
+-**description:** Text (Short Text)
+-**content:** Rich Text (Markdown)
+-**cover:** Media (Image upload)
+-**slug:** UID (Unique identifier based on the title)
+-**category:** Relation - many to many (Connect to a Category collection)
 
 ### Author
 
 The Author collection will contain the authors of the blog posts. It will have the following fields:
 
-**name:** Text
-**avatar:** Media (Image upload)
-**email:** Short Text
-**blogs:** Relation with the Blogs collection - one to many
+-**name:** Text
+-**avatar:** Media (Image upload)
+-**email:** Short Text
+-**blogs:** Relation with the Blogs collection - one to many
 
 ### Category
 
 The Category collection will contain the categories of the blog posts. It will have the following fields:
-**name:** Text (Short Text)
-**slug:** UID
-**description:** Text (Short Text)
-**blogs:** Relation - many to many
+-**name:** Text (Short Text)
+-**slug:** UID
+-**description:** Text (Short Text)
+-**blogs:** Relation - many to many
 
 ## Understanding Relationships
 
 In Strapi, relationships define how different content types interact with each other.
+
 **One-to-Many Relationship:** This relationship exists when one record in one collection can be associated with multiple records in another collection. For example, one author can have multiple blog posts.
+
 **Many-to-Many Relationship:** This relationship allows multiple records in one collection to be associated with multiple records in another collection. For instance, a blog post can belong to multiple categories and vice versa.
 
 For more detailed information on relationships in Strapi, check out this [guide](https://strapi.io/blog/understanding-and-using-relations-in-strapi).
@@ -131,7 +133,7 @@ On installation, you'll see some prompts. Name your project `frontend` and refer
 
 ## Install necessary dependencies
 
-Add the following dependencies to your frontend Next app: `react-hot-toast`, `react-icons`, `react-markdown`, `react-slugify`, `@uiw/react-markdown-editor`, `react-loader-spinner`,`remark-gfm`, `rehype-raw`, `react-syntax-highlighter`,`@tailwindcss/typography`  for use later.
+Add the following dependencies to your frontend Next app: `react-hot-toast`, `react-icons`, `react-markdown`, `react-slugify`, `@uiw/react-markdown-editor`, `react-loader-spinner`,`remark-gfm`, `rehype-raw`, `react-syntax-highlighter`, `@tailwindcss/typography`  for use later.
 
 ```bash
 cd frontend
@@ -1057,10 +1059,10 @@ The **`onChange`** event updates the `markdownContent` state as users type, ensu
 ## 4. Post Submission
 The **`handleSubmit`** function handles the process of submitting the form:
 
-- **Step 1**: Create a slug from the post title using `slugify(title)`. A slug is a URL-friendly version of the title (e.g., "My First Post" becomes "my-first-post").
-- **Step 2**: Send the post data (title, description, slug, and markdown content) to the server using the `createPost` function. The server responds with the post's ID.
-- **Step 3**: If a cover image was selected, upload it separately using the `uploadImage` function. This uploads the image and associates it with the post using the post's ID.
-- **Step 4**: Once the post is successfully created and the image is uploaded, the user is redirected to the blog post’s page (`/blogs/${postSlug}`), and a success message is displayed using **`toast.success()`**.
+- Create a slug from the post title using `slugify(title)`. A slug is a URL-friendly version of the title (e.g., "My First Post" becomes "my-first-post").
+- Send the post data (title, description, slug, and markdown content) to the server using the `createPost` function. The server responds with the post's ID.
+- If a cover image was selected, upload it separately using the `uploadImage` function. This uploads the image and associates it with the post using the post's ID.
+- Once the post is successfully created and the image is uploaded, the user is redirected to the blog post’s page (`/blogs/${postSlug}`), and a success message is displayed using **`toast.success()`**.
 
 ## 5. Error Handling
 If something goes wrong during the submission (e.g., network error or invalid data):
