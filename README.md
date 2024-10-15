@@ -16,7 +16,7 @@ Here's the final result of the blog website you will build if you want to see it
 
 - This tutorial uses the latest version of Strapi at the time of writing this article `v5.0.x`
 
-- Node `v18.x.x` or `v20.x.x.` You can download Node.js [here](https://nodejs.org/en/download/package-manager).
+- Node version `v18.x.x` or `v20.x.x.` You can download Node.js [here](https://nodejs.org/en/download/package-manager).
 
 # Setting up project folder
 
@@ -95,7 +95,7 @@ In Strapi, relationships define how different content types interact with each o
 **One-to-Many Relationship:** This relationship exists when one record in one collection can be associated with multiple records in another collection. For example, one author can have multiple blog posts.
 **Many-to-Many Relationship:** This relationship allows multiple records in one collection to be associated with multiple records in another collection. For instance, a blog post can belong to multiple categories and vice versa.
 
-For more detailed information on relationships in Strapi, check out this guide.
+For more detailed information on relationships in Strapi, check out this [guide](https://strapi.io/blog/understanding-and-using-relations-in-strapi).
 
 ## Inputting Dummy Data
 
@@ -131,14 +131,30 @@ On installation, you'll see some prompts. Name your project `frontend` and refer
 
 ## Install necessary dependencies
 
-Add the following dependencies to your frontend Next app: react-hot-toast, react-icons, react-markdown, react-loader-spinner, remark-gfm, rehype-raw,react-syntax-highlighter for use later.
+Add the following dependencies to your frontend Next app: `react-hot-toast`, `react-icons`, `react-markdown`, `react-loader-spinner`, `remark-gfm`, `rehype-raw`, `react-syntax-highlighter`,`@tailwindcss/typography`  for use later.
 
 ```bash
 cd frontend
-npm install react-hot-toast moment react-icons react-markdown react-loader-spinner remark-gfm rehype-raw react-syntax-highlighter
+npm install react-hot-toast @tailwindcss/typography moment react-icons react-markdown react-loader-spinner remark-gfm rehype-raw react-syntax-highlighter
 ```
 
 These libraries will help you implement features like **notifications**, **date handling**, **icons**, **Markdown rendering** and **loading indicators**. We'd see how it would be implemented later in this article.
+
+After installation, add this plugin to your `tailwind.config.ts` file to enable smooth markdown render in your application.
+
+```ts
+module.exports = {
+  theme: {
+    // ...
+  },
+  plugins: [
+    require('@tailwindcss/typography'),
+    // ...
+  ],
+}
+
+```
+This is necessary when rendering code syntax in our page.
 
 # Setup environmental variables
 
@@ -507,6 +523,7 @@ In the `app/layout.tsx` import the `Navbar` component from your `components` fol
 
 Make changes to the `metadata` object, changing the **title**, **description** and **icon** to fit your application.
 
+
 ```tsx
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
@@ -529,9 +546,6 @@ export const metadata: Metadata = {
   title: "DEV.BLOG",
   description:
     "Your go-to resource for all things Strapi—explore best practices, tips, and community insights to elevate your projects",
-  icons: {
-    icon: "/strapi.svg",
-  },
 };
 
 export default function RootLayout({
@@ -682,7 +696,184 @@ It creates a `new URLSearchParams` object, sets the page parameter to the select
 
 This way, users can easily navigate through different pages of blog posts!
 
-In each post we are making use of Next Js `Link` component to route users to a single post with each post's unique `slug`. In our next step, we would use the slug to make a query to fetch the single post data in our `BlogPost.tsx` page. 
+In each post we are making use of Next Js `Link` component to route users to a single post with each post's unique `slug`. In our next step, we would use the slug to make a query to fetch the data in our single blog post page. 
 
 # Create Single Blog page
+
+To create a single blog page, the next step is to set up the necessary folder structure. In the `app` directory, create a new folder named `blogs`, and then create a subfolder called `[slug]` within it. Finally, add a file named `pages.tsx` inside the `[slug]` folder. This structure will look like this: `app/blogs/[slug]/pages.tsx.`
+
+![dynamic routing](/images/dynamic-route.png "Dynamic Routing NextJs")
+
+The reason for creating a folder named `[slug]` is that it allows us to define [dynamic routes](https://nextjs.org/docs/pages/building-your-application/routing/dynamic-routes) in Next.js. 
+
+The `[slug]` part of the folder name acts as a placeholder for the unique identifier of each blog post, enabling the application to render different content based on the specific slug in the URL. This way, when users navigate to a blog post, they will see the corresponding content based on its unique slug
+
+Paste the following code in your `page.tsx` file.
+
+```tsx
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @next/next/no-img-element */
+"use client";
+import { useEffect, useState } from "react";
+import { getPostBySlug } from "../../../lib/api"; // Import your API function
+import { useRouter } from "next/navigation";
+import { BlogPost } from "@/lib/types";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { dracula } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { FaClipboard } from "react-icons/fa"; // Import your chosen icon
+import Loader from "@/components/Loader";
+import moment from "moment";
+import { toast } from "react-hot-toast";
+
+
+const handleCopyCode = async (code: string) => {
+  try {
+    await navigator.clipboard.writeText(code);
+    toast.success("Code copied to clipboard!"); // Show toast on error
+  } catch (err) {
+    console.error("Failed to copy code: ", err);
+  }
+};
+
+const BlogPostPage = ({ params }: { params: { slug: string } }) => {
+  const { slug } = params;
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      if (slug) {
+        try {
+          // Fetch the post using the slug
+          const fetchedPost = await getPostBySlug(slug);
+          setPost(fetchedPost);
+        } catch (err) {
+          setError("Error fetching post.");
+          console.log(err);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchPost();
+  }, [slug]);
+
+  if (loading)
+    return (
+      <div className="max-w-screen-md mx-auto flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  if (error) return <p className="max-w-screen-md mx-auto">Error: {error}</p>;
+  if (!post) return <p className="max-w-screen-md mx-auto">No post found.</p>;
+  console.log(post);
+  return (
+    <div className="max-w-screen-md mx-auto p-4">
+      <h1 className="text-4xl leading-[60px] capitalize text-center font-bold text-purple-800 font-jet-brains">
+        {post.title}
+      </h1>
+      <div className="w-full flex items-center justify-center font-light">
+        Published: {moment(post.createdAt).fromNow()}
+      </div>
+
+      {/* Categories Section */}
+      {post.categories && post.categories.length > 0 && (
+        <div className="flex flex-wrap space-x-2 my-4">
+          {post.categories.map(({ name, documentId }) => (
+            <span
+              key={documentId}
+              className="border border-purple-900 font-medium px-2 py-2 text-sm"
+            >
+              {name}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {post.cover && (
+        <div className="relative h-72 w-full my-4">
+          <img
+            src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${post.cover.url}`}
+            alt={post.title}
+            className="rounded-lg w-full h-full object-cover"
+          />
+        </div>
+      )}
+      <p className="text-gray-300 leading-[32px] tracking-wide italic mt-2 mb-6">
+        {post.description}
+      </p>
+      <Markdown
+        className={"leading-[40px] max-w-screen-lg prose prose-invert"}
+        remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw]}
+        components={{
+          code({ inline, className, children, ...props }: any) {
+            const match = /language-(\w+)/.exec(className || "");
+            const codeString = String(children).replace(/\n$/, "");
+
+            return !inline && match ? (
+              <div className="relative">
+                <button
+                  onClick={() => handleCopyCode(codeString)}
+                  className="absolute top-2 right-2 bg-gray-700 text-white p-1 rounded-md hover:bg-gray-600"
+                  title="Copy to clipboard"
+                >
+                  <FaClipboard color="#fff" />
+                </button>
+                <SyntaxHighlighter
+                  style={dracula}
+                  PreTag="div"
+                  language={match[1]}
+                  {...props}
+                >
+                  {codeString}
+                </SyntaxHighlighter>
+              </div>
+            ) : (
+              <code className={className} {...props}>
+                {children}
+              </code>
+            );
+          },
+        }}
+      >
+        {post.content}
+      </Markdown>
+      <button
+        onClick={() => router.back()}
+        className="text-purple-800 mt-4 inline-block hover:underline"
+      >
+        Back to Blogs
+      </button>
+    </div>
+  );
+};
+
+export default BlogPostPage;
+
+
+```
+
+In the `page.tsx` file, we created a dynamic blog post page using the `[slug]` dynamic route. This component allows us to fetch and display blog post content based on the slug from the URL. Here’s a breakdown of the main features:
+
+1. **Dynamic Data Fetching:** We use the `useEffect` hook to fetch the blog post data from an API using the `getPostBySlug` function, which takes the `slug` as a parameter. The fetched data is then stored in the component’s state.
+
+2. **Loading and Error States:** While the data is being fetched, a `Loader` component is displayed. If an error occurs or the post is not found, appropriate messages are shown.
+
+3. **Markdown Rendering:** The blog content is written in markdown, and we use the `react-markdown` package to render it, supporting various markdown syntax features like **headings**, **lists**, and **links**. The `remark-gfm` plugin adds GitHub-flavored markdown, while `rehype-raw` allows rendering raw HTML.
+
+4. **Syntax Highlighting:** Code blocks within the blog are styled using `react-syntax-highlighter` with the `Dracula` theme. We also provide a button for users to copy code snippets to their clipboard.
+
+5. **Content Display:** The component displays the blog’s `title`, `description`, `publication date` (formatted with `Moment.js`), `categories`, and `cover image` (if available).
+
+6. **Navigation:** A **"Back to Blogs"** button allows users to navigate back to the blog listing.
+
+This setup allows us to dynamically render blog posts, enhancing the user experience with features like *code copying* and *syntax highlighting*.
+
 
