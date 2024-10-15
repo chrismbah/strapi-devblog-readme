@@ -130,6 +130,7 @@ On installation, you'll see some prompts. Name your project `frontend` and refer
 **Note:** Make sure you select the recommended `App Router` for Next JS because thats what we'd be using through out our application
 
 ## Install necessary dependencies
+
 Add the following dependencies to your frontend Next app: react-hot-toast, react-icons, react-markdown, react-loader-spinner, remark-gfm, rehype-raw,react-syntax-highlighter for use later.
 
 ```bash
@@ -184,11 +185,9 @@ export interface BlogPost {
   description: string;
   content: string; // rich markdown text
   createdAt: string; // ISO date string
-  updatedAt: string; // ISO date string
-  cover: ImageData; //  featured image
+  cover: ImageData; // Assuming this is the structure of your featured image
   author: Author; // The author of the blog post
   categories: Category[]; // An array of categories associated with the post
-  documentId: string;
 }
 
 export interface UserBlogPostData {
@@ -412,6 +411,7 @@ const Navbar = () => {
 
 export default Navbar;
 ```
+
 The `Navbar` component imports necessary components and functions
 
 - The `useState` is used to manage the search bar visibility (`searchOpen`) and search query (`searchQuery`).
@@ -424,8 +424,7 @@ The `Navbar` component imports necessary components and functions
 
 Create a `Loader` and `Pagination` component within the `components` folder to for the **data handling** and **pagination**
 
-
-##  Create the `Loader` component
+## Create the `Loader` component
 
 The `Loader` component would be used to indicate the loading state when fetching data from strapi
 
@@ -447,8 +446,8 @@ const Loader = () => {
 };
 
 export default Loader;
-
 ```
+
 ## Create the `Pagination` component
 
 The `Pagination` component would be used to implement pagination for the blogs
@@ -500,12 +499,11 @@ const Pagination: React.FC<PaginationProps> = ({
 };
 
 export default Pagination;
-
 ```
 
 # Setup App Layout
 
-In the `app/layout.tsx` import the `Navbar` component from your `components` folder  and `Toaster` component from the `react-hot-toast` package and add them to the layout.
+In the `app/layout.tsx` import the `Navbar` component from your `components` folder and `Toaster` component from the `react-hot-toast` package and add them to the layout.
 
 Make changes to the `metadata` object, changing the **title**, **description** and **icon** to fit your application.
 
@@ -553,6 +551,138 @@ export default function RootLayout({
     </html>
   );
 }
-
 ```
+
+# Create Home Page for blog
+
+You will create a home page for your blog frontend in this step. In this case, the home page will display a list of all the articles.
+
+There should be a file named page.tsx in the `src/app/` directory.
+
+Add the following code to `page.tsx`:
+
+```tsx
+/* eslint-disable @next/next/no-img-element */
+"use client";
+import { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import { getAllPosts } from "../lib/api";
+import { BlogPost } from "@/lib/types";
+import Loader from "@/components/Loader";
+import Pagination from "@/components/Pagination";
+
+export default function Home() {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [totalPages, setTotalPages] = useState(1); // Track total number of pages
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Get the search query and page from the URL params
+  const searchQuery = searchParams.get("search") ?? "";
+  const pageParam = searchParams.get("page");
+  const currentPage = pageParam ? parseInt(pageParam) : 1; // Default to page 1 if not present
+
+  useEffect(() => {
+    const fetchPosts = async (page: number) => {
+      try {
+        const { posts, pagination } = await getAllPosts(page, searchQuery);
+        setPosts(posts);
+        setTotalPages(pagination.pageCount); // Set total pages
+      } catch (error) {
+        setError("Error fetching posts.");
+        console.error("Error fetching posts:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts(currentPage);
+  }, [currentPage, searchQuery]); // Re-fetch when page or search query changes
+
+  const handlePageChange = (newPage: number) => {
+    // Update the page parameter in the URL
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set("page", newPage.toString());
+    router.push(`?${newParams.toString()}`);
+    setLoading(true); // Show loader while fetching
+  };
+
+  return (
+    <div className="max-w-screen-lg mx-auto p-4">
+      {loading && (
+        <div className="w-full flex items-center justify-center">
+          <Loader />
+        </div>
+      )}
+      {error && <p>{error}</p>}
+
+      {!loading && !error && (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {posts.length > 0 ? (
+              posts.map((post) => (
+                <div
+                  key={post.id}
+                  className="cursor-pointer bg-gray-900 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+                >
+                  <Link href={`/blogs/${post.slug}`} className="block">
+                    {post.cover?.url && (
+                      <div className="relative h-36 w-full">
+                        <img
+                          src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${post.cover.url}`}
+                          alt={post.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <div className="p-4">
+                      <h2 className="text-lg font-semibold font-jet-brains text-white line-clamp-2">
+                        {post.title}
+                      </h2>
+                      <p className="text-gray-400 mt-2 text-sm leading-6 line-clamp-3">
+                        {post.description}
+                      </p>
+                      <p className="text-purple-400 text-sm mt-4 inline-block font-medium hover:underline">
+                        Read More
+                      </p>
+                    </div>
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-400">No posts available at the moment.</p>
+            )}
+          </div>
+
+          {/* Pagination Controls */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange} // Update page when pagination changes
+          />
+        </>
+      )}
+    </div>
+  );
+}
+```
+
+This code sets up a Next.js page that will fetch a list of all the blogs from the Strapi API `/blogs` endpoint and renders them in a neat blog-like format.
+It handles the loading and error aspect when fetching all blogs.
+
+The `fetchPosts` function uses the `getAllPosts` function in our `/lib/api.tsx` file to make the API request.
+
+The `handlePageChange` function is used to manage pagination in our blog. When a user clicks to navigate to a new page, this function updates the URL with the new page number while preserving any existing search parameters.
+
+It creates a `new URLSearchParams` object, sets the page parameter to the selected page number, and then uses `router.push` to navigate to the updated URL. Finally, it sets a loading state to true, which can be used to show a loader while the new content is being fetched.
+
+This way, users can easily navigate through different pages of blog posts!
+
+In each post we are making use of Next Js `Link` component to route users to a single post with each post's unique `slug`. In our next step, we would use the slug to make a query to fetch the single post data in our `BlogPost.tsx` page. 
+
+# Create Single Blog page
 
