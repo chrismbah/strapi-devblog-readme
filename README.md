@@ -131,14 +131,14 @@ On installation, you'll see some prompts. Name your project `frontend` and refer
 
 ## Install necessary dependencies
 
-Add the following dependencies to your frontend Next app: `react-hot-toast`, `react-icons`, `react-markdown`, `react-loader-spinner`, `remark-gfm`, `rehype-raw`, `react-syntax-highlighter`,`@tailwindcss/typography`  for use later.
+Add the following dependencies to your frontend Next app: `react-hot-toast`, `react-icons`, `react-markdown`, `react-slugify`, `@uiw/react-markdown-editor`, `react-loader-spinner`,`remark-gfm`, `rehype-raw`, `react-syntax-highlighter`,`@tailwindcss/typography`  for use later.
 
 ```bash
 cd frontend
 npm install react-hot-toast @tailwindcss/typography moment react-icons react-markdown react-loader-spinner remark-gfm rehype-raw react-syntax-highlighter
 ```
 
-These libraries will help you implement features like **notifications**, **date handling**, **icons**, **Markdown rendering** and **loading indicators**. We'd see how it would be implemented later in this article.
+These libraries will help you implement features like **notifications**, **date handling**, **icons**, **Markdown rendering and writing** and **loading indicators**. We'd see how it would be implemented later in this article.
 
 After installation, add this plugin to your `tailwind.config.ts` file to enable smooth markdown render in your application.
 
@@ -366,7 +366,7 @@ const Navbar = () => {
       <nav className="flex justify-between items-center mb-2 p-4 ">
         <div className="flex items-center gap-4">
           <Link href="/">
-            <h1 className="font-bold text-xl font-jet-brains text-white">
+            <h1 className="font-bold text-xl text-purple-600 font-jet-brains">
               DEV.BLOG
             </h1>
           </Link>
@@ -686,11 +686,12 @@ export default function Home() {
 ```
 
 This code sets up a Next.js page that will fetch a list of all the blogs from the Strapi API `/blogs` endpoint and renders them in a neat blog-like format.
-It handles the loading and error aspect when fetching all blogs.
 
-The `fetchPosts` function uses the `getAllPosts` function in our `/lib/api.tsx` file to make the API request.
+We use the `useEffect` hook to fetch a list of all the blogs from the endpoint and renders them in a neat blog-like format. The `fetchPosts` function uses the `getAllPosts` function in our `/lib/api.tsx` file to make the API request.
 
-The `handlePageChange` function is used to manage pagination in our blog. When a user clicks to navigate to a new page, this function updates the URL with the new page number while preserving any existing search parameters.
+While the data is being fetched, a `Loader` component is displayed. If an error occurs or the post is not found, appropriate messages are shown.
+
+The `handlePageChange` function is used to manage pagination in our blog. When a user clicks to navigate to a new page, this function updates the URL with the new page number while preserving any existing search parameters. 
 
 It creates a `new URLSearchParams` object, sets the page parameter to the selected page number, and then uses `router.push` to navigate to the updated URL. Finally, it sets a loading state to true, which can be used to show a loader while the new content is being fetched.
 
@@ -704,15 +705,13 @@ To create a single blog page, the next step is to set up the necessary folder st
 
 ![dynamic routing](/images/dynamic-route.png "Dynamic Routing NextJs")
 
-The reason for creating a folder named `[slug]` is that it allows us to define [dynamic routes](https://nextjs.org/docs/pages/building-your-application/routing/dynamic-routes) in Next.js. 
+The reason for creating a folder named `[slug]` is that it allows us to define [dynamic routes](https://nextjs.org/docs/pages/building-your-application/routing/dynamic-routes) in Next.js.
 
-The `[slug]` part of the folder name acts as a placeholder for the unique identifier of each blog post, enabling the application to render different content based on the specific slug in the URL. This way, when users navigate to a blog post, they will see the corresponding content based on its unique slug
+The `[slug]` part of the folder name acts as a placeholder for the unique identifier of each blog post, enabling the application to render different content based on the specific slug in the URL. This way, when users navigate to a blog post, they will see the corresponding content based on its unique slug. For example `/blogs/slug-of-blog-post`
 
 Paste the following code in your `page.tsx` file.
 
 ```tsx
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @next/next/no-img-element */
 "use client";
 import { useEffect, useState } from "react";
 import { getPostBySlug } from "../../../lib/api"; // Import your API function
@@ -862,18 +861,232 @@ export default BlogPostPage;
 
 In the `page.tsx` file, we created a dynamic blog post page using the `[slug]` dynamic route. This component allows us to fetch and display blog post content based on the slug from the URL. Here’s a breakdown of the main features:
 
-1. **Dynamic Data Fetching:** We use the `useEffect` hook to fetch the blog post data from an API using the `getPostBySlug` function, which takes the `slug` as a parameter. The fetched data is then stored in the component’s state.
+We use the `useEffect` hook to fetch the blog post data from an API using the `getPostBySlug` function, which takes the `slug` as a parameter. The fetched data is then stored in the component’s state.
 
-2. **Loading and Error States:** While the data is being fetched, a `Loader` component is displayed. If an error occurs or the post is not found, appropriate messages are shown.
 
-3. **Markdown Rendering:** The blog content is written in markdown, and we use the `react-markdown` package to render it, supporting various markdown syntax features like **headings**, **lists**, and **links**. The `remark-gfm` plugin adds GitHub-flavored markdown, while `rehype-raw` allows rendering raw HTML.
+The blog content is written in markdown, and we use the `react-markdown` package to render it, supporting various markdown syntax features like **headings**, **lists**, and **links**. The `remark-gfm` plugin adds GitHub-flavored markdown, while `rehype-raw` allows rendering raw HTML.
 
-4. **Syntax Highlighting:** Code blocks within the blog are styled using `react-syntax-highlighter` with the `Dracula` theme. We also provide a button for users to copy code snippets to their clipboard.
+Code blocks within the blog are styled using `react-syntax-highlighter` with the `Dracula` theme. We also provide a button for users to copy code snippets to their clipboard.
 
-5. **Content Display:** The component displays the blog’s `title`, `description`, `publication date` (formatted with `Moment.js`), `categories`, and `cover image` (if available).
+The component displays the blog’s `title`, `description`, `publication date` (formatted with `Moment.js`), `categories`, and `cover image` (if available).
 
-6. **Navigation:** A **"Back to Blogs"** button allows users to navigate back to the blog listing.
+A *"Back to Blogs"* button allows users to navigate back to the blog listing.
 
 This setup allows us to dynamically render blog posts, enhancing the user experience with features like *code copying* and *syntax highlighting*.
+
+
+# Create Write Post component
+
+We will proceed to create a `WritePost` component to enable users seamlessly write posts and upload images.
+
+Create a folder in the `app` directory called `write` and create a `page.tsx` file to create a new page with the route `/write`. 
+
+Paste the following code in the `page.tsx`
+
+```tsx
+"use client";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { FaArrowLeft } from "react-icons/fa";
+import slugify from "react-slugify";
+import MarkdownEditor from "@uiw/react-markdown-editor";
+import Image from "next/image";
+import { createPost, uploadImage } from "@/lib/api";
+import { toast } from "react-hot-toast";
+
+const WritePost = () => {
+  const [markdownContent, setMarkdownContent] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [error, setError] = useState<string | null>(null); // Error state
+  const router = useRouter();
+
+  // Handle image upload and preview
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const selectedImage = e.target.files[0];
+      setCoverImage(selectedImage);
+      setImagePreview(URL.createObjectURL(selectedImage));
+    }
+  };
+
+  // Handle post submission
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      // Create slug from the title
+      const postSlug = slugify(title);
+      // Create the post initially without the image
+      const postData = {
+        title,
+        description,
+        slug: postSlug,
+        content: markdownContent,
+      };
+
+      // Step 1: Create the blog post without the cover image
+      const postResponse = await createPost(postData);
+      const postId = postResponse.id;
+      console.log(postId);
+
+      // Step 2: Upload cover image (if provided) and associate with blog post
+      if (coverImage) {
+        const uploadedImage = await uploadImage(coverImage, postId);
+        console.log("Image uploaded:", uploadedImage);
+      }
+
+      // Redirect after successful post creation
+      router.push(`/blogs/${postSlug}`);
+      toast.success("Post created successfully");
+    } catch (error) {
+      console.error("Failed to create post:", error);
+      setError("Failed to create post. Please try again.");
+      toast.error("Failed to create post. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-screen-md mx-auto p-4">
+      <button
+        onClick={() => router.back()}
+        className="text-purple-400 hover:text-purple-500 mb-6 flex items-center space-x-2"
+      >
+        <FaArrowLeft /> <span>Back</span>
+      </button>
+
+      <h1 className="text-xl font-bold mb-4 text-gray-100 font-jet-brains">
+        Create New Post
+      </h1>
+      {/* Render a message if there is an error */}
+      {error && (
+        <div className="mb-4 p-3 bg-red-600 text-white rounded-md">{error}</div>
+      )}
+
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Enter a Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full p-2 font-jet-brains text-3xl font-semibold bg-[#161b22] text-gray-100 border-b border-gray-600 focus:border-purple-500 focus:outline-none placeholder-gray-400"
+        />
+      </div>
+      <div className="mb-4">
+        <textarea
+          placeholder="Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full p-2 font-jet-brains bg-[#161b22] font-semibold text-gray-100 border-b border-gray-600 focus:border-purple-500 focus:outline-none placeholder-gray-400"
+        />
+      </div>
+      <div className="mb-6">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          className="w-full bg-[#161b22] text-gray-100"
+        />
+        {imagePreview && (
+          <div className="mt-4">
+            <Image
+              src={imagePreview}
+              alt="Selected Cover"
+              width="100"
+              height="100"
+              className="w-full h-auto rounded-md"
+            />
+          </div>
+        )}
+      </div>
+
+      <div className="mb-6">
+        <MarkdownEditor
+          value={markdownContent}
+          height="200px"
+          onChange={(value) => setMarkdownContent(value)}
+          className="bg-[#161b22] text-gray-100"
+        />
+      </div>
+
+      <button
+        onClick={handleSubmit}
+        disabled={isLoading || (!title && !description)}
+        className="bg-purple-600 text-gray-100 py-2 px-4 rounded-md hover:bg-purple-500"
+      >
+        {isLoading ? "Loading" : "Post"}
+      </button>
+    </div>
+  );
+};
+
+export default WritePost;
+
+```
+
+The `WritePost` component enables users to write and submit a blog post, including the ability to upload an image as a cover photo. Let’s break down each part of the code in more detail:
+
+## 1. State Management
+The component uses React’s `useState` to manage various pieces of data:
+
+- **`markdownContent`**: Stores the content of the post written in Markdown format.
+- **`title`** and **`description`**: Store the post's title and description, which will be displayed on the blog.
+- **`coverImage`**: Stores the selected image file for the post’s cover.
+- **`imagePreview`**: This holds a preview URL for the selected cover image, so the user can see the image before submitting.
+- **`isLoading`**: A boolean that tracks whether the form submission is in progress, disabling the button while loading.
+- **`error`**: Holds error messages if anything goes wrong during submission (e.g., failed API request).
+
+## 2. Image Handling
+The function **`handleImageChange`** listens for a file input (image upload). When an image is selected:
+
+- It saves the selected image file to `coverImage`.
+- It generates a URL from the file to preview the image before submission, using `URL.createObjectURL()`.
+
+This is useful for giving users visual feedback about the image they've selected for their post.
+
+## 3. Markdown Editor
+The component uses **`@uiw/react-markdown-editor`** which we have previously installed for handling post content. It allows users to write their posts in Markdown, a popular format for creating text with simple syntax for headings, lists, links, etc.
+
+The **`onChange`** event updates the `markdownContent` state as users type, ensuring that the post’s content is properly captured.
+
+## 4. Post Submission
+The **`handleSubmit`** function handles the process of submitting the form:
+
+- **Step 1**: Create a slug from the post title using `slugify(title)`. A slug is a URL-friendly version of the title (e.g., "My First Post" becomes "my-first-post").
+- **Step 2**: Send the post data (title, description, slug, and markdown content) to the server using the `createPost` function. The server responds with the post's ID.
+- **Step 3**: If a cover image was selected, upload it separately using the `uploadImage` function. This uploads the image and associates it with the post using the post's ID.
+- **Step 4**: Once the post is successfully created and the image is uploaded, the user is redirected to the blog post’s page (`/blogs/${postSlug}`), and a success message is displayed using **`toast.success()`**.
+
+## 5. Error Handling
+If something goes wrong during the submission (e.g., network error or invalid data):
+
+- The **`catch`** block in `handleSubmit` sets an error message in the `error` state.
+- This error message is displayed at the top of the form and also shown to the user via **`toast.error()`**.
+
+## 6. Rendering the Form
+The form is divided into several parts:
+
+- **Back Button**: A button with an arrow icon allows the user to navigate back to the previous page.
+- **Title Input**: A text input field allows the user to enter the post’s title.
+- **Description Textarea**: A textarea field allows the user to add a brief description for the post.
+- **Image Upload**: A file input allows the user to upload an image for the post’s cover. If an image is selected, it is displayed as a preview below the input.
+- **Markdown Editor**: The post content is written in markdown format using the Markdown editor.
+- **Submit Button**: The "Post" button triggers the submission process. It is disabled when the form is loading or if the title and description are not filled.
+
+## 7. Button States
+The "Post" button is designed to:
+
+- Show a loading indicator when the form is being submitted (`isLoading` state).
+- Be disabled when either no title or description is provided, ensuring that the user fills out essential fields before submitting the post.
+
+## Summary
+The `WritePost` component handles writing a blog post, image uploading, and markdown content creation. It provides visual feedback (image previews, loading states, error messages) to ensure a smooth user experience.
+
+The post is created and saved in two steps: first, the content is saved, and then the image (if any) is uploaded and linked to the post.
 
 
