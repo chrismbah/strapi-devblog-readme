@@ -66,28 +66,28 @@ From your admin panel, click on **Content-Type Builder** -> **Create new collect
 The Blog collection will contain the blog posts. It will have the following fields:
 
 - **title:** Text (Long Text)
--**description:** Text (Short Text)
--**content:** Rich Text (Markdown)
--**cover:** Media (Image upload)
--**slug:** UID (Unique identifier based on the title)
--**category:** Relation - many to many (Connect to a Category collection)
+- **description:** Text (Short Text)
+- **content:** Rich Text (Markdown)
+- **cover:** Media (Image upload)
+- **slug:** UID (Unique identifier based on the title)
+- **category:** Relation - many to many (Connect to a Category collection)
 
 ### Author
 
 The Author collection will contain the authors of the blog posts. It will have the following fields:
 
--**name:** Text
--**avatar:** Media (Image upload)
--**email:** Short Text
--**blogs:** Relation with the Blogs collection - one to many
+- **name:** Text
+- **avatar:** Media (Image upload)
+- **email:** Short Text
+- **blogs:** Relation with the Blogs collection - one to many
 
 ### Category
 
 The Category collection will contain the categories of the blog posts. It will have the following fields:
--**name:** Text (Short Text)
--**slug:** UID
--**description:** Text (Short Text)
--**blogs:** Relation - many to many
+- **name:** Text (Short Text)
+- **slug:** UID
+- **description:** Text (Short Text)
+- **blogs:** Relation - many to many
 
 ## Understanding Relationships
 
