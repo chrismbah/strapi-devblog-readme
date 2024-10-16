@@ -26,7 +26,7 @@ Open up your terminal and create a `blog-strapi` folder to store your project fi
 mkdir blog-strapi
 ```
 
-Navigate into blog-strapi
+Navigate into the `blog-strapi` directory
 
 ```bash
 cd blog-strapi
@@ -34,7 +34,7 @@ cd blog-strapi
 
 # Create a Standard Strapi App
 
-Create your Strapi app in a folder named backend.
+Create your Strapi app in a folder named `backend`.
 
 ```bash
 npx create-strapi-app@5.0.4 backend --quickstart
@@ -44,7 +44,7 @@ The `--quickstart` flag sets up your Strapi app with an **SQLite** database and 
 
 If the server is not already running in your terminal, `cd` into the `backend` folder and run `npm develop` to launch it.
 
-Visit in your browser and register your details in the Strapi Admin Registration Form.`http://localhost:1337/admin`
+Visit `http://localhost:1337/admin` in your browser and register in the **Strapi Admin Registration Form**.
 
 # Design the content model for a developer friendly blog
 
@@ -119,6 +119,9 @@ Scroll downwards and do the same for the **Upload Permission** tab to enable us 
 
 # Create a Standard Next.js App
 
+Strapi supports multiple frontend framework including **React**, **Next.js**, **Gatsby**, **Svelte**, **Vue Js** etc. but for this application we'd make use of **Next Js**
+
+
 In a new terminal session, change the directory to `blog-strapi `and run the following command:
 
 ```bash
@@ -129,8 +132,7 @@ On installation, you'll see some prompts. Name your project `frontend` and refer
 
 ![Next JS installation](/images/next-install.png "Install Next Js")
 
-**Note:** Make sure you select the recommended `App Router` for Next JS because thats what we'd be using through out our application
-
+**Note:** Make sure you select the recommended `App Router` for Next JS because that's what we'll be using throughout our application
 ## Install necessary dependencies
 
 Add the following dependencies to your frontend Next app: `react-hot-toast`, `react-icons`, `react-markdown`, `react-slugify`, `@uiw/react-markdown-editor`, `react-loader-spinner`,`remark-gfm`, `rehype-raw`, `react-syntax-highlighter`, `@tailwindcss/typography`  for use later.
@@ -140,7 +142,7 @@ cd frontend
 npm install react-hot-toast @tailwindcss/typography moment react-icons react-markdown react-loader-spinner remark-gfm rehype-raw react-syntax-highlighter
 ```
 
-These libraries will help you implement features like **notifications**, **date handling**, **icons**, **Markdown rendering and writing** and **loading indicators**. We'd see how it would be implemented later in this article.
+These libraries will help you implement features like **notifications**, **date handling**, **icons**, **Markdown rendering and writing** and **loading indicators**. We'll see how these are implemented later in the article.
 
 After installation, add this plugin to your `tailwind.config.ts` file to enable smooth markdown render in your application.
 
@@ -160,7 +162,7 @@ This is necessary when rendering code syntax in our page.
 
 # Setup environmental variables
 
-Create a `.env` file in the root of your `frontend` directory and paste the following **environment variables**:
+Create a `.env` file in the root of your `frontend` directory and add the following **environment variables**:
 
 ```bash
 NEXT_PUBLIC_STRAPI_URL=http://localhost:1337/
@@ -186,7 +188,7 @@ export interface Author {
   id: number; // Assuming each author has a unique ID
   name: string;
   email: string;
-  avatar: ImageData; // Assuming you have an avatar image
+  avatar: ImageData; // Assuming the author has
 }
 
 // export Interface for Category Data
@@ -266,7 +268,7 @@ export const getPostBySlug = async (slug: string) => {
   try {
     const response = await api.get(
       `api/blogs?filters[slug]=${slug}&populate=*`
-    ); // Fetching single post via the slug parameter
+    ); // Fetch a single blog post using the slug parameter
     if (response.data.data.length > 0) {
       // If post exists
       return response.data.data[0]; // Return the post data
@@ -334,9 +336,9 @@ Let's talk about each of the following functions
 
 - `createPost(postData: UserBlogPostData)`: This function creates a new blog post by sending the provided post data to the Strapi API. It returns the created post's data or throws an error if the creation fails.
 
-# Create Components
+# Creating Components
 
-## Create the `Navbar` component and implement search handling
+## Creating the `Navbar` component and implement search handling
 
 Create a `components` folder within the `src` folder and create a `Navbar.tsx` file within the folder. The `Navbar` component would handle search functionality as well as links to other routes.
 
@@ -351,7 +353,7 @@ const Navbar = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchParams = useSearchParams();
-  const pathname = usePathname(); // Get the current pathname
+  const pathname = usePathname(); // Get the current route path
   const { replace } = useRouter(); // Next js function to replace routes
 
   // Handle search query submission
@@ -361,6 +363,7 @@ const Navbar = () => {
     else params.delete("search");
     // Always routes with the search query
     replace(`/?${params.toString()}`);
+    setSearchOpen(false); // Close search bar after submission
   };
 
   return (
@@ -442,7 +445,7 @@ The `Navbar` component imports necessary components and functions
 
 Create a `Loader` and `Pagination` component within the `components` folder to for the **data handling** and **pagination**
 
-## Create the `Loader` component
+## Creating the `Loader` component
 
 The `Loader` component would be used to indicate the loading state when fetching data from strapi
 
@@ -466,7 +469,7 @@ const Loader = () => {
 export default Loader;
 ```
 
-## Create the `Pagination` component
+## Creating the `Pagination` component
 
 The `Pagination` component would be used to implement pagination for the blogs
 
@@ -523,7 +526,7 @@ export default Pagination;
 
 In the `app/layout.tsx` import the `Navbar` component from your `components` folder and `Toaster` component from the `react-hot-toast` package and add them to the layout.
 
-Make changes to the `metadata` object, changing the **title**, **description** and **icon** to fit your application.
+Update the `metadata` object by adjusting the **title**, **description**, and **icon** to suit your application.
 
 
 ```tsx
@@ -568,10 +571,11 @@ export default function RootLayout({
   );
 }
 ```
+# Creating Pages
 
-# Create Home Page for blog
+## Creating the Home Page
 
-You will create a home page for your blog frontend in this step. In this case, the home page will display a list of all the articles.
+You will create the home page for your blog frontend in this step. In this case, the home page will display a list of all the blog posts.
 
 There should be a file named page.tsx in the `src/app/` directory.
 
@@ -689,19 +693,19 @@ export default function Home() {
 
 This code sets up a Next.js page that will fetch a list of all the blogs from the Strapi API `/blogs` endpoint and renders them in a neat blog-like format.
 
-We use the `useEffect` hook to fetch a list of all the blogs from the endpoint and renders them in a neat blog-like format. The `fetchPosts` function uses the `getAllPosts` function in our `/lib/api.tsx` file to make the API request.
+### Key Points:
 
-While the data is being fetched, a `Loader` component is displayed. If an error occurs or the post is not found, appropriate messages are shown.
+- We use the `useEffect` hook to fetch a list of all the blogs from the endpoint and renders them in a neat blog-like format. The `fetchPosts` function uses the `getAllPosts` function in our `/lib/api.tsx` file to make the API request.
 
-The `handlePageChange` function is used to manage pagination in our blog. When a user clicks to navigate to a new page, this function updates the URL with the new page number while preserving any existing search parameters. 
+- While the data is being fetched, a `Loader` component is displayed. If an error occurs or the post is not found, appropriate messages are shown.
 
-It creates a `new URLSearchParams` object, sets the page parameter to the selected page number, and then uses `router.push` to navigate to the updated URL. Finally, it sets a loading state to true, which can be used to show a loader while the new content is being fetched.
+- The `handlePageChange` function is used to manage pagination in our blog. When a user clicks to navigate to a new page, this function updates the URL with the new page number while preserving any existing search parameters. 
 
-This way, users can easily navigate through different pages of blog posts!
+- It creates a `new URLSearchParams` object, sets the page parameter to the selected page number, and then uses `router.push` to navigate to the updated URL. Finally, it sets a loading state to true, which can be used to show a loader while the new content is being fetched.
 
-In each post we are making use of Next Js `Link` component to route users to a single post with each post's unique `slug`. In our next step, we would use the slug to make a query to fetch the data in our single blog post page. 
+- In each post we are making use of Next Js `Link` component to route users to a single post with each post's unique `slug`. In our next step, we would use the slug to make a query to fetch the data in our single blog post page. 
 
-# Create Single Blog page
+## Creating the Single Blog page
 
 To create a single blog page, the next step is to set up the necessary folder structure. In the `app` directory, create a new folder named `blogs`, and then create a subfolder called `[slug]` within it. Finally, add a file named `pages.tsx` inside the `[slug]` folder. This structure will look like this: `app/blogs/[slug]/pages.tsx.`
 
@@ -860,24 +864,24 @@ export default BlogPostPage;
 
 
 ```
+### Key Points
 
-In the `page.tsx` file, we created a dynamic blog post page using the `[slug]` dynamic route. This component allows us to fetch and display blog post content based on the slug from the URL. Here’s a breakdown of the main features:
+- In the `page.tsx` file, we created a dynamic blog post page using the `[slug]` dynamic route. This component allows us to fetch and display blog post content based on the slug from the URL. Here’s a breakdown of the main features:
 
-We use the `useEffect` hook to fetch the blog post data from an API using the `getPostBySlug` function, which takes the `slug` as a parameter. The fetched data is then stored in the component’s state.
+- We use the `useEffect` hook to fetch the blog post data from an API using the `getPostBySlug` function, which takes the `slug` as a parameter. The fetched data is then stored in the component’s state.
 
+- The blog content is written in markdown, and we use the `react-markdown` package to render it, supporting various markdown syntax features like **headings**, **lists**, and **links**. The `remark-gfm` plugin adds GitHub-flavored markdown, while `rehype-raw` allows rendering raw HTML.
 
-The blog content is written in markdown, and we use the `react-markdown` package to render it, supporting various markdown syntax features like **headings**, **lists**, and **links**. The `remark-gfm` plugin adds GitHub-flavored markdown, while `rehype-raw` allows rendering raw HTML.
+- Code blocks within the blog are styled using `react-syntax-highlighter` with the `Dracula` theme. We also provide a button for users to copy code snippets to their clipboard.
 
-Code blocks within the blog are styled using `react-syntax-highlighter` with the `Dracula` theme. We also provide a button for users to copy code snippets to their clipboard.
+- The component displays the blog’s `title`, `description`, `publication date` (formatted with `Moment.js`), `categories`, and `cover image` (if available).
 
-The component displays the blog’s `title`, `description`, `publication date` (formatted with `Moment.js`), `categories`, and `cover image` (if available).
-
-A *"Back to Blogs"* button allows users to navigate back to the blog listing.
+- A *"Back to Blogs"* button allows users to navigate back to the blog listing.
 
 This setup allows us to dynamically render blog posts, enhancing the user experience with features like *code copying* and *syntax highlighting*.
 
 
-# Create Write Post component
+## Creating Write Post page
 
 We will proceed to create a `WritePost` component to enable users seamlessly write posts and upload images.
 
@@ -1031,64 +1035,64 @@ export default WritePost;
 
 ```
 
-The `WritePost` component enables users to write and submit a blog post, including the ability to upload an image as a cover photo. Let’s break down each part of the code in more detail:
+The `WritePost` component allows users to write and submit a blog post, including uploading a cover image. Let's break down its key functionalities below:
 
-## 1. State Management
-The component uses React’s `useState` to manage various pieces of data:
+### **1. State Management**
+The component uses React’s `useState` hook to manage the following states:
 
-- **`markdownContent`**: Stores the content of the post written in Markdown format.
-- **`title`** and **`description`**: Store the post's title and description, which will be displayed on the blog.
-- **`coverImage`**: Stores the selected image file for the post’s cover.
-- **`imagePreview`**: This holds a preview URL for the selected cover image, so the user can see the image before submitting.
-- **`isLoading`**: A boolean that tracks whether the form submission is in progress, disabling the button while loading.
-- **`error`**: Holds error messages if anything goes wrong during submission (e.g., failed API request).
+- **`markdownContent`**: Stores the content of the blog post written in Markdown format.
+- **`title`** and **`description`**: Manage the post's title and description, which will be displayed on the blog.
+- **`coverImage`**: Holds the image file selected by the user for the post’s cover.
+- **`imagePreview`**: Provides a URL to preview the selected cover image before submission.
+- **`isLoading`**: Tracks whether the post submission is in progress. While loading, the submit button is disabled.
+- **`error`**: Captures and displays any errors encountered during form submission (e.g., failed API requests).
 
-## 2. Image Handling
-The function **`handleImageChange`** listens for a file input (image upload). When an image is selected:
+### **2. Image Handling**
+The component includes the **`handleImageChange`** function, which manages image uploads:
 
-- It saves the selected image file to `coverImage`.
-- It generates a URL from the file to preview the image before submission, using `URL.createObjectURL()`.
+- When an image is selected, it saves the file to the `coverImage` state.
+- A preview URL is generated using `URL.createObjectURL()`, allowing the user to see the image before submitting it.
 
-This is useful for giving users visual feedback about the image they've selected for their post.
+This feature provides visual feedback, letting users know exactly what image they are uploading as the post’s cover.
 
-## 3. Markdown Editor
-The component uses **`@uiw/react-markdown-editor`** which we have previously installed for handling post content. It allows users to write their posts in Markdown, a popular format for creating text with simple syntax for headings, lists, links, etc.
+### **3. Markdown Editor**
+The post content is written in Markdown format using the **`@uiw/react-markdown-editor`** package. This editor simplifies text formatting for headings, lists, links, and more.
 
-The **`onChange`** event updates the `markdownContent` state as users type, ensuring that the post’s content is properly captured.
+- The **`onChange`** event handler updates the `markdownContent` state as the user types, ensuring that all content is captured.
 
-## 4. Post Submission
-The **`handleSubmit`** function handles the process of submitting the form:
+### **4. Post Submission**
+The **`handleSubmit`** function processes the form submission in two steps:
 
-- Create a slug from the post title using `slugify(title)`. A slug is a URL-friendly version of the title (e.g., "My First Post" becomes "my-first-post").
-- Send the post data (title, description, slug, and markdown content) to the server using the `createPost` function. The server responds with the post's ID.
-- If a cover image was selected, upload it separately using the `uploadImage` function. This uploads the image and associates it with the post using the post's ID.
-- Once the post is successfully created and the image is uploaded, the user is redirected to the blog post’s page (`/blogs/${postSlug}`), and a success message is displayed using **`toast.success()`**.
+1. **Create the Post**:
+   - A **slug** is generated from the post title using `slugify(title)`. The slug is a URL-friendly version of the title (e.g., "My First Post" becomes "my-first-post").
+   - The post data (title, description, slug, and markdown content) is sent to the server via the `createPost` function. The server responds with the post’s ID.
 
-## 5. Error Handling
-If something goes wrong during the submission (e.g., network error or invalid data):
+2. **Upload the Cover Image**:
+   - If a cover image was selected, it is uploaded separately using the `uploadImage` function.
+   - The image is linked to the post using its ID.
 
-- The **`catch`** block in `handleSubmit` sets an error message in the `error` state.
-- This error message is displayed at the top of the form and also shown to the user via **`toast.error()`**.
+After successful creation and image upload:
+- The user is redirected to the blog post’s page (`/blogs/${postSlug}`).
+- A success message is displayed using **`toast.success()`**.
+- If an error occurs, an error message is displayed using **`toast.error()`**.
 
-## 6. Rendering the Form
-The form is divided into several parts:
+### **5. User Experience**
+- **Image Preview**: Users can preview the selected cover image before submitting their post.
+- **Loading Indicator**: The `isLoading` state ensures that the submit button is disabled during submission to prevent duplicate posts.
+- **Error Handling**: Any issues encountered during submission are displayed to the user through error messages.
+- **Success Notification**: Upon successful submission, users receive a notification and are redirected to the new blog post.
 
-- **Back Button**: A button with an arrow icon allows the user to navigate back to the previous page.
-- **Title Input**: A text input field allows the user to enter the post’s title.
-- **Description Textarea**: A textarea field allows the user to add a brief description for the post.
-- **Image Upload**: A file input allows the user to upload an image for the post’s cover. If an image is selected, it is displayed as a preview below the input.
-- **Markdown Editor**: The post content is written in markdown format using the Markdown editor.
-- **Submit Button**: The "Post" button triggers the submission process. It is disabled when the form is loading or if the title and description are not filled.
+### **Summary**
+The `WritePost` component provides a comprehensive experience for users to write blog posts with Markdown formatting, upload a cover image, and submit the post to the server. It offers visual feedback (image previews), handles loading states, and ensures that errors are displayed when necessary. The blog post is created and saved in two steps: content creation and image uploading, ensuring that each part is handled correctly.
 
-## 7. Button States
-The "Post" button is designed to:
+# Hosting Your App with Strapi
+For detailed instructions on hosting your application, refer to the official documentation: [Strapi Hosting Documentation](https://docs.strapi.io/dev-docs/deployment).
 
-- Show a loading indicator when the form is being submitted (`isLoading` state).
-- Be disabled when either no title or description is provided, ensuring that the user fills out essential fields before submitting the post.
+# Conclusion
 
-## Summary
-The `WritePost` component handles writing a blog post, image uploading, and markdown content creation. It provides visual feedback (image previews, loading states, error messages) to ensure a smooth user experience.
+In this guide, we explored the essential components of building a blog application using **Next.js** and **Strapi**. From setting up the application layout to creating dynamic routes for individual blog posts, we covered how to effectively manage state, handle image uploads with strapi, and implement a markdown editor for content creation. 
 
-The post is created and saved in two steps: first, the content is saved, and then the image (if any) is uploaded and linked to the post.
+By following these steps, you can create a robust blogging platform that offers a seamless user experience, allowing users and developers to engage with content in an intuitive way. As you continue to develop your application, consider integrating additional features such as **user authentication**, **commenting systems**, or **analytics** to enhance functionality and user engagement. 
 
+With the flexibility of Strapi as a headless CMS and the power of **Next.js** for rendering, the possibilities for your blog are endless. Happy coding!
 
