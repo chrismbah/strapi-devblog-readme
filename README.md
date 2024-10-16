@@ -141,8 +141,17 @@ Add the following dependencies to your frontend Next app: `react-hot-toast`, `re
 cd frontend
 npm install react-hot-toast @tailwindcss/typography moment react-icons react-markdown react-loader-spinner remark-gfm rehype-raw react-syntax-highlighter
 ```
+These libraries would be used throughout the application serving several purposes.
 
-These libraries will help you implement features like **notifications**, **date handling**, **icons**, **Markdown rendering and writing** and **loading indicators**. We'll see how these are implemented later in the article.
+- **`react-hot-toast`**: Provides easy-to-use notifications for user interactions.
+- **`@tailwindcss/typography`**: Enhances the typography styles in your application for better readability.
+- **`moment`**: A library for parsing, validating, manipulating, and displaying dates and times.
+- **`react-icons`**: Offers a comprehensive set of icons for use throughout your application.
+- **`react-markdown`**: Renders Markdown content as React components, enabling rich text display.
+- **`react-loader-spinner`**: Displays loading indicators to enhance user experience during asynchronous operations.
+- **`remark-gfm`**: Enables GitHub Flavored Markdown features, such as tables and strikethroughs, in your Markdown content.
+- **`rehype-raw`**: Allows rendering of raw HTML in Markdown, giving flexibility in content formatting.
+- **`react-syntax-highlighter`**: Provides syntax highlighting for code snippets in your Markdown content.
 
 After installation, add this plugin to your `tailwind.config.ts` file to enable smooth markdown render in your application.
 
