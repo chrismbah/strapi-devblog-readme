@@ -156,6 +156,7 @@ These libraries would be used throughout the application serving several purpose
 After installation, add this plugin to your `tailwind.config.ts` file to enable smooth markdown render in your application.
 
 ```ts
+// tailwind.config.ts
 module.exports = {
   theme: {
     // ...
@@ -187,6 +188,7 @@ page.
 Create a new file called `lib/types.ts` in the `frontend` directory and paste the following
 
 ```ts
+// lib/types.ts
 // export Interface for Image Data
 export interface ImageData {
   url: string;
@@ -242,6 +244,7 @@ This shows the structure of the various data types we would recieve for our blog
 Create another file within the `lib` folder called `api.ts` paste the following functions
 
 ```ts
+// lib/api.ts
 import axios, { AxiosInstance } from "axios";
 import { UserBlogPostData } from "./types";
 
@@ -352,6 +355,7 @@ Let's talk about each of the following functions
 Create a `components` folder within the `src` folder and create a `Navbar.tsx` file within the folder. The `Navbar` component would handle search functionality as well as links to other routes.
 
 ```tsx
+// src/components/Navbar.tsx
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
@@ -459,7 +463,7 @@ Create a `Loader` and `Pagination` component within the `components` folder to f
 The `Loader` component would be used to indicate the loading state when fetching data from strapi
 
 ```tsx
-// components/Loader.tsx
+// // src/components/Loader.tsx
 import { LineWave } from "react-loader-spinner";
 
 const Loader = () => {
@@ -483,6 +487,7 @@ export default Loader;
 The `Pagination` component would be used to implement pagination for the blogs
 
 ```tsx
+// src/components/Pagination.tsx
 import React from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa"; // Import arrow icons from react-icons
 
@@ -539,6 +544,7 @@ Update the `metadata` object by adjusting the **title**, **description**, and **
 
 
 ```tsx
+// app/layout.tsx
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import localFont from "next/font/local";
@@ -591,6 +597,7 @@ There should be a file named page.tsx in the `src/app/` directory.
 Add the following code to `page.tsx`:
 
 ```tsx
+// src/app/page.tsx
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import { useEffect, useState } from "react";
@@ -727,6 +734,7 @@ The `[slug]` part of the folder name acts as a placeholder for the unique identi
 Paste the following code in your `page.tsx` file.
 
 ```tsx
+// app/blogs/[slug]/pages.tsx.
 "use client";
 import { useEffect, useState } from "react";
 import { getPostBySlug } from "../../../lib/api"; // Import your API function
@@ -899,6 +907,7 @@ Create a folder in the `app` directory called `write` and create a `page.tsx` fi
 Paste the following code in the `page.tsx`
 
 ```tsx
+// app/blogs/write/pages.tsx.
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
