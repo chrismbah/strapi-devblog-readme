@@ -119,7 +119,7 @@ Scroll downwards and do the same for the **Upload Permission** tab to enable us 
 
 # Create a Standard Next.js App
 
-Strapi supports multiple frontend framework including **React**, **Next.js**, **Gatsby**, **Svelte**, **Vue Js** etc. but for this application we'd make use of **Next Js**
+Strapi supports multiple frontend frameworks including **React**, **Next.js**, **Gatsby**, **Svelte**, **Vue Js** etc. but for this application we'd be making use of **Next Js**.
 
 
 In a new terminal session, change the directory to `blog-strapi `and run the following command:
@@ -168,7 +168,7 @@ module.exports = {
 }
 
 ```
-This is necessary when rendering code syntax in our page.
+This is necessary when rendering markdown syntax with tailwind in our page.
 
 # Setup environmental variables
 
@@ -181,7 +181,7 @@ NEXT_PUBLIC_PAGE_LIMIT=6
 
 The `NEXT_PUBLIC_STRAPI_URL` variable is used to connect to your Strapi backend.
 The `NEXT_PUBLIC_PAGE_LIMIT` variable is used to limit the number of blog posts displayed on each
-page.
+page for the pagination functionality.
 
 # Setup Types and API Routes
 
@@ -338,15 +338,15 @@ Let's talk about each of the following functions
 
 - `api`: This is an instance of **Axios**, configured with a base URL pointing to your Strapi backend. It simplifies making HTTP requests to your API.
 
-- `getAllPosts(page: number = 1, searchQuery: string = "")`: This asynchronous function fetches all blog posts from the Strapi API, allowing for **pagination** and optional filtering based on a **search query**. It returns the posts and pagination data.
+- `getAllPosts(page: number = 1, searchQuery: string = "")`: This fetches all blog posts from the Strapi API, allowing for **pagination** and optional filtering based on a **search query**. It returns the posts and pagination data.
 
-- `getPostBySlug(slug: string)`: This function retrieves a **single** blog post based on its slug. It checks if the post exists and returns the corresponding data or throws an error if not found.
+- `getPostBySlug(slug: string)`: This retrieves a **single** blog post based on its slug. It checks if the post exists and returns the corresponding data or throws an error if not found.
 
-- `getAllCategories()`: This function fetches all categories from the Strapi API, returning their data for use in categorizing blog posts.
+- `getAllCategories()`: This fetches all categories from the Strapi API, returning their data for use in categorizing blog posts.
 
-- `uploadImage(image: File, refId: number)`: This function handles image uploads to the Strapi API. It prepares a `FormData` object with the image and its associated metadata (like reference ID and field name) and sends it to the server.
+- `uploadImage(image: File, refId: number)`: This handles image uploads to the Strapi API. It prepares a `FormData` object with the image and its associated metadata (like reference ID and field name) and sends it to the server.
 
-- `createPost(postData: UserBlogPostData)`: This function creates a new blog post by sending the provided post data to the Strapi API. It returns the created post's data or throws an error if the creation fails.
+- `createPost(postData: UserBlogPostData)`: This creates a new blog post by sending the provided post data to the Strapi API. It returns the created post's data or throws an error if the creation fails.
 
 # Creating Components
 
@@ -734,7 +734,7 @@ The `[slug]` part of the folder name acts as a placeholder for the unique identi
 Paste the following code in your `page.tsx` file.
 
 ```tsx
-// app/blogs/[slug]/pages.tsx.
+// app/blogs/[slug]/page.tsx.
 "use client";
 import { useEffect, useState } from "react";
 import { getPostBySlug } from "../../../lib/api"; // Import your API function
@@ -907,7 +907,7 @@ Create a folder in the `app` directory called `write` and create a `page.tsx` fi
 Paste the following code in the `page.tsx`
 
 ```tsx
-// app/blogs/write/pages.tsx.
+// app/write/page.tsx.
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -1103,14 +1103,12 @@ After successful creation and image upload:
 ### **Summary**
 The `WritePost` component provides a comprehensive experience for users to write blog posts with Markdown formatting, upload a cover image, and submit the post to the server. It offers visual feedback (image previews), handles loading states, and ensures that errors are displayed when necessary. The blog post is created and saved in two steps: content creation and image uploading, ensuring that each part is handled correctly.
 
-# Hosting Your App with Strapi
-For detailed instructions on hosting your application, refer to the official documentation: [Strapi Hosting Documentation](https://docs.strapi.io/dev-docs/deployment).
+# Hosting Your Application With Strapi
+Check the official documentation to read up on hosting your strapi application in more detail: [Strapi Hosting Documentation](https://docs.strapi.io/dev-docs/deployment).
 
 # Conclusion
 
-In this guide, we explored the essential components of building a blog application using **Next.js** and **Strapi**. From setting up the application layout to creating dynamic routes for individual blog posts, we covered how to effectively manage state, handle image uploads with strapi, and implement a markdown editor for content creation. 
+In this guide, we explored how to build a developer-friendly blog application using Next.js and Strapi. From setting up our development environment to creating content models, setting up the application layout, creating dynamic routes for individual blog posts, we covered how to effectively manage state, implement pagination and search functionality, handle image uploads with strapi, and implement a markdown editor for content creation. 
 
-By following these steps, you can create a robust blogging platform that offers a seamless user experience, allowing users and developers to engage with content in an intuitive way. As you continue to develop your application, consider integrating additional features such as **user authentication**, **commenting systems**, or **analytics** to enhance functionality and user engagement. 
-
-With the flexibility of Strapi as a headless CMS and the power of **Next.js** for rendering, the possibilities for your blog are endless. Happy coding!
+Feel free to clone the application from the [GitHub repository](https://github.com/chrismbah/blog-strapi) and extend its functionality. To learn more about Strapi and its other impressive features, please visit the [official documentation](https://docs.strapi.io/).
 
