@@ -1,12 +1,12 @@
 # Introduction
 
-In today’s digital landscape, creating a robust and interactive blogging platform is essential for sharing knowledge and engaging with a wider audience. This article outlines the process of building a developer-friendly blog using Strapi, Next.js, Tailwind CSS, and TypeScript.
+Content is in high demand today, and a good blogging site is a great way of reaching out to people, for learning, educative or entertainment purposes. In this article, we shall describe how to go about integrating the Strapi framework with Next.js that is optimized with Tailwind CSS to develop a blog that targets developers.
 
-**[Strapi](https://strapi.io)** is a leading open-source headless CMS (Content Management System) that provides a flexible and user-friendly interface for managing content. Its scalability and ability to deliver content via a powerful API make it an ideal choice for developers looking to create dynamic applications.
+**[Strapi](https://strapi.io)** is the best open source headless content management system **(CMS)**. It allows users to build and manage content easily without having to worry about how to deliver it through a frontend application. This is quite advantageous to developers who want to build dynamic applications as it has an API that can be used to render the applications very fast.
 
-**[Next.js](https://nextjs.org/docs)** is a robust React framework that enhances web applications with features like server-side rendering, static site generation, and automatic code splitting. These capabilities ensure optimal performance and a seamless user experience.
+**[Next.js](https://nextjs.org/docs)** is an all purpose react framework providing features such as server-side rendering, static site generation, automatic code splitting among many other web application enhancement features. These features are essential in ensuring that the application is performing at its best and the user is getting a good experience.
 
-This documentation will guide you through the steps required to set up your blog, covering backend configuration with Strapi, frontend development with Next.js, SEO optimization, pagination, and search functionality. By the end of this tutorial, you will have a comprehensive understanding of building a fully functional, developer-friendly blog. Let’s get started!
+This document will take you through what it takes to setup up your blog from backend with strapi, develop your frontend using next js focus on SEO, add pagination and search. By the end of this tutorial, you should know how to create a complete and easy to use blog. Time to begin!
 
 # Before Getting Started
 
@@ -50,12 +50,12 @@ Visit `http://localhost:1337/admin` in your browser and register in the **Strapi
 
 Now that your Strapi application is setup and running, fill the form with your personal information to get authenticated to the **Strapi Admin Panel**.
 
-![Strapi signup page](/images/strapi-signup.png "Strapi SignUp")
+![Strapi signup page](./images/strapi-signup.png "Strapi SignUp")
 
-<!-- ![Create new collection](/images/new-collection-type.png "Create new collection")
+<!-- ![Create new collection](./images/new-collection-type.png "Create new collection")
 
 
-![Create blog collection](/images/blog-collection-type.png "Create blog collection") -->
+![Create blog collection](./images/blog-collection-type.png "Create blog collection") -->
 
 From your admin panel, click on **Content-Type Builder** -> **Create new collection type** tab to create a collection and their field types for your application. In this case we are creating three collections; **Author**, **Blog**, and **Category**.
 
@@ -107,15 +107,15 @@ Now that you’ve set up your collections, it’s time for some fun! You can inp
 
 Now let's allow API access to your blog to allow you access the blog posts via your API on the frontend. To do that, click on **Settings** -> **Roles** -> **Public**
 
-![Public API ](/images/public-api.png "Public API")
+![Public API ](./images/public-api.png "Public API")
 
 Afterward, collapse the **Blog Permission** tab and mark the **Select all** option and click on the **Save** button.
 
-![Public API ](/images/blog-public-api.png "Blog API")
+![Public API ](./images/blog-public-api.png "Blog API")
 
 Scroll downwards and do the same for the **Upload Permission** tab to enable us **upload** images to our strapi backend.
 
-![Public API ](/images/upload-public-api.png "Upload API")
+![Public API ](./images/upload-public-api.png "Upload API")
 
 # Create a Standard Next.js App
 
@@ -130,7 +130,7 @@ npx create-next-app@latest
 
 On installation, you'll see some prompts. Name your project `frontend` and refer to the image below for the other responses.
 
-![Next JS installation](/images/next-install.png "Install Next Js")
+![Next JS installation](./images/next-install.png "Install Next Js")
 
 **Note:** Make sure you select the recommended `App Router` for Next JS because that's what we'll be using throughout our application
 ## Install necessary dependencies
@@ -725,7 +725,7 @@ This code sets up a Next.js page that will fetch a list of all the blogs from th
 
 To create a single blog page, the next step is to set up the necessary folder structure. In the `app` directory, create a new folder named `blogs`, and then create a subfolder called `[slug]` within it. Finally, add a file named `pages.tsx` inside the `[slug]` folder. This structure will look like this: `app/blogs/[slug]/pages.tsx.`
 
-![dynamic routing](/images/dynamic-route.png "Dynamic Routing NextJs")
+![dynamic routing](./images/dynamic-route.png "Dynamic Routing NextJs")
 
 The reason for creating a folder named `[slug]` is that it allows us to define [dynamic routes](https://nextjs.org/docs/pages/building-your-application/routing/dynamic-routes) in Next.js.
 
