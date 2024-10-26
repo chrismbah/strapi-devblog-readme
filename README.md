@@ -2,11 +2,11 @@
 
 Content is in high demand today, and a good blogging site is a great way of reaching out to people, for learning, educative or entertainment purposes. In this article, we shall describe how to go about integrating the Strapi framework with Next.js that is optimized with Tailwind CSS to develop a blog that targets developers.
 
-**[Strapi](https://strapi.io)** is the best open source headless content management system **(CMS)**. It allows users to build and manage content easily without having to worry about how to deliver it through a frontend application. This is quite advantageous to developers who want to build dynamic applications as it has an API that can be used to render the applications very fast.
+**[Strapi](https://strapi.io)** is an open source headless content management system **(CMS)** that allows users to build and manage content easily without having to worry about how to deliver it through a frontend application. This is quite advantageous to developers who want to build dynamic applications as it has an API that can be used to render the applications very fast.
 
 **[Next.js](https://nextjs.org/docs)** is an all purpose react framework providing features such as server-side rendering, static site generation, automatic code splitting among many other web application enhancement features. These features are essential in ensuring that the application is performing at its best and the user is getting a good experience.
 
-This document will take you through what it takes to setup up your blog from backend with strapi, develop your frontend using next js focus on SEO, add pagination and search. By the end of this tutorial, you should know how to create a complete and easy to use blog. Time to begin!
+This guide will take you through what it takes to setup up your blog from backend with strapi, develop your frontend using next js focus on SEO, add pagination and search. By the end of this tutorial, you should know how to create a complete and easy to use blog. Time to begin!
 
 # Before Getting Started
 
@@ -93,9 +93,9 @@ The Category collection will contain the categories of the blog posts. It will h
 
 In Strapi, relationships define how different content types interact with each other.
 
-**One-to-Many Relationship:** This relationship exists when one record in one collection can be associated with multiple records in another collection. For example, one author can have multiple blog posts.
+- **One-to-Many Relationship:** This relationship exists when one record in one collection can be associated with multiple records in another collection. For example, one author can have multiple blog posts.
 
-**Many-to-Many Relationship:** This relationship allows multiple records in one collection to be associated with multiple records in another collection. For instance, a blog post can belong to multiple categories and vice versa.
+- **Many-to-Many Relationship:** This relationship allows multiple records in one collection to be associated with multiple records in another collection. For instance, a blog post can belong to multiple categories and vice versa.
 
 For more detailed information on relationships in Strapi, check out this [guide](https://strapi.io/blog/understanding-and-using-relations-in-strapi).
 
@@ -1101,7 +1101,7 @@ After successful creation and image upload:
 - **Success Notification**: Upon successful submission, users receive a notification and are redirected to the new blog post.
 
 ### **Summary**
-The `WritePost` component provides a comprehensive experience for users to write blog posts with Markdown formatting, upload a cover image, and submit the post to the server. It offers visual feedback (image previews), handles loading states, and ensures that errors are displayed when necessary. The blog post is created and saved in two steps: content creation and image uploading, ensuring that each part is handled correctly.
+The `WritePost` component provides a comprehensive experience for users to write blog posts with Markdown formatting, upload a cover image, and submit the post to the server. It offers visual feedback (image previews), handles loading states, and ensures that errors are displayed when necessary. The blog post is created and saved in two steps: **content creation** and **image uploading**, ensuring that each part is handled correctly.
 
 # Hosting Your Application With Strapi
 Check the official documentation to read up on hosting your strapi application in more detail: [Strapi Hosting Documentation](https://docs.strapi.io/dev-docs/deployment).
