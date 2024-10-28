@@ -1110,5 +1110,5 @@ Check the official documentation to read up on hosting your strapi application i
 
 In this guide, we explored how to build a developer-friendly blog application using Next.js and Strapi. From setting up our development environment to creating content models, setting up the application layout, creating dynamic routes for individual blog posts, we covered how to effectively manage state, implement pagination and search functionality, handle image uploads with strapi, and implement a markdown editor for content creation. 
 
-Feel free to clone the application from the [GitHub repository](https://github.com/chrismbah/blog-strapi) and extend its functionality. To learn more about Strapi and its other impressive features, you can visit the [official documentation](https://docs.strapi.io/).
+Feel free to clone the application from the [GitHub repository](https://github.com/chrismbah/strapi-dev-blog) and extend its functionality. To learn more about Strapi and its other impressive features, you can visit the [official documentation](https://docs.strapi.io/).
 
