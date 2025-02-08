@@ -10,7 +10,7 @@ This guide will take you through what it takes to setup up your blog from backen
 
 # Before Getting Started
 
-Here's the final result of the blog website you will build if you want to see it. Check out the [project repo here.](https://github.com/chrismbah/blog-strapi)
+Here's the final result of the blog website you will build if you want to see it. Check out the [project repo here.](https://github.com/chrismbah/strapi-dev-blog)
 
 # Prerequisites
 
